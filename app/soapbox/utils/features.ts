@@ -34,6 +34,12 @@ export const PLEROMA = 'Pleroma';
 export const AKKOMA = 'Akkoma';
 
 /**
+ * Iceshrimp, fork of Firefish (fork of Misskey)
+ * @see {@link https://iceshrimp.dev/iceshrimp/iceshrimp}
+ */
+export const ICESHRIMP = 'Iceshrimp';
+
+/**
  * Mitra, a Rust backend with deep Ethereum integrations.
  * @see {@link https://codeberg.org/silverpill/mitra}
  */
@@ -68,6 +74,9 @@ const getInstanceFeatures = (instance: Instance) => {
   const v = parseVersion(instance.version);
   const features = instance.pleroma.getIn(['metadata', 'features'], ImmutableList()) as ImmutableList<string>;
   const federation = instance.pleroma.getIn(['metadata', 'federation'], ImmutableMap()) as ImmutableMap<string, any>;
+  console.log('TOTO');
+console.log(v);
+console.log(v.software);
   return {
     /**
      * Can view and manage ActivityPub aliases through the API.
@@ -193,6 +202,7 @@ const getInstanceFeatures = (instance: Instance) => {
       v.software === MASTODON && gte(v.compatVersion, '3.1.0'),
       (v.software === PLEROMA || v.software === AKKOMA) && gte(v.version, '0.9.9'),
       v.software === PIXELFED,
+      v.software === ICESHRIMP,
     ]),
 
     /**
@@ -202,6 +212,7 @@ const getInstanceFeatures = (instance: Instance) => {
     bots: any([
       v.software === MASTODON,
       (v.software === PLEROMA || v.software === AKKOMA),
+      v.software === ICESHRIMP,
     ]),
 
     /**
@@ -232,6 +243,7 @@ const getInstanceFeatures = (instance: Instance) => {
       v.software === MASTODON && gte(v.compatVersion, '2.6.0'),
       (v.software === PLEROMA || v.software === AKKOMA) && gte(v.version, '0.9.9'),
       v.software === PIXELFED,
+      v.software === ICESHRIMP,
     ]),
 
     /**
@@ -241,11 +253,13 @@ const getInstanceFeatures = (instance: Instance) => {
     directTimeline: any([
       v.software === MASTODON && lt(v.compatVersion, '3.0.0'),
       (v.software === PLEROMA || v.software === AKKOMA) && gte(v.version, '0.9.9'),
+      v.software === ICESHRIMP,
     ]),
 
     editStatuses: any([
       v.software === MASTODON && gte(v.version, '3.5.0'),
       features.includes('editing'),
+      v.software === ICESHRIMP,
     ]),
 
     /**
@@ -270,13 +284,19 @@ const getInstanceFeatures = (instance: Instance) => {
      * @see GET /api/v1/pleroma/statuses/:id/reactions/:emoji?
      * @see DELETE /api/v1/pleroma/statuses/:id/reactions/:emoji
      */
-    emojiReacts: (v.software === PLEROMA || v.software === AKKOMA) && gte(v.version, '2.0.0'),
+    emojiReacts: any([
+      (v.software === PLEROMA || v.software === AKKOMA) && gte(v.version, '2.0.0'),
+      v.software === ICESHRIMP,
+    ]),
 
     /**
      * The backend allows only RGI ("Recommended for General Interchange") emoji reactions.
      * @see PUT /api/v1/pleroma/statuses/:id/reactions/:emoji
      */
-    emojiReactsRGI: (v.software === PLEROMA || v.software === AKKOMA) && gte(v.version, '2.2.49'),
+    emojiReactsRGI: any([
+      (v.software === PLEROMA || v.software === AKKOMA) && gte(v.version, '2.2.49'),
+      v.software === ICESHRIMP,
+    ]),
 
     /**
      * Sign in with an Ethereum wallet.
@@ -339,6 +359,7 @@ const getInstanceFeatures = (instance: Instance) => {
     followRequests: any([
       v.software === MASTODON,
       (v.software === PLEROMA || v.software === AKKOMA),
+      v.software === ICESHRIMP,
     ]),
 
     /**
@@ -386,6 +407,7 @@ const getInstanceFeatures = (instance: Instance) => {
     lists: any([
       v.software === MASTODON && gte(v.compatVersion, '2.1.0'),
       (v.software === PLEROMA || v.software === AKKOMA) && gte(v.version, '0.9.9'),
+      v.software === ICESHRIMP,
     ]),
 
     /**
@@ -478,6 +500,7 @@ const getInstanceFeatures = (instance: Instance) => {
     polls: any([
       v.software === MASTODON && gte(v.version, '2.8.0'),
       (v.software === PLEROMA || v.software === AKKOMA),
+      v.software === ICESHRIMP,
       v.software === TRUTHSOCIAL,
     ]),
 
@@ -503,6 +526,7 @@ const getInstanceFeatures = (instance: Instance) => {
     profileFields: any([
       v.software === MASTODON,
       (v.software === PLEROMA || v.software === AKKOMA),
+      v.software === ICESHRIMP,
     ]),
 
 
@@ -515,6 +539,7 @@ const getInstanceFeatures = (instance: Instance) => {
     publicTimeline: any([
       v.software === MASTODON,
       (v.software === PLEROMA || v.software === AKKOMA),
+      v.software === ICESHRIMP,
     ]),
 
 
@@ -562,6 +587,7 @@ const getInstanceFeatures = (instance: Instance) => {
     richText: any([
       v.software === MASTODON && v.build === GLITCH,
       (v.software === PLEROMA || v.software === AKKOMA),
+      v.software === ICESHRIMP,
     ]),
 
     /**
@@ -590,6 +616,7 @@ const getInstanceFeatures = (instance: Instance) => {
     searchFromAccount: any([
       v.software === MASTODON && gte(v.version, '2.8.0'),
       (v.software === PLEROMA || v.software === AKKOMA) && gte(v.version, '1.0.0'),
+      v.software === ICESHRIMP,
     ]),
 
     /**
@@ -731,7 +758,7 @@ export const parseVersion = (version: string): Backend => {
     return {
       build: null,
       compatVersion: '0.0.0',
-      software: null,
+      software: ICESHRIMP,
       version: '0.0.0',
     };
   }
